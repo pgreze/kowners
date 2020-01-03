@@ -12,7 +12,7 @@ class Pattern(
             // Match only root folder for a path containing a / (except end of string)
             when {
                 it.startsWith('/') -> "^${it.substring(1)}"
-                it.indexOf('/') >= 0 -> "^$it"
+                it.contains('/') -> "^$it"
                 else -> it
             }
         } // Use .+ for ** and later on replace with .*
@@ -29,10 +29,6 @@ class Pattern(
                 when {
                     pattern.contains("**") ->
                         regex.find(it).isMatchingInputStart(it)
-                    pattern.startsWith('*') -> // Exp: *.txt
-                        regex.containsMatchIn(it)
-                    pattern.endsWith('*') ->
-                        regex.matchEntire(it).isMatchingInputStart(it)
                     else ->
                         regex.containsMatchIn(it)
                 }

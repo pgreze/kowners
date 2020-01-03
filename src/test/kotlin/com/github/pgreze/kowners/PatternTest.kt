@@ -65,19 +65,22 @@ class PatternTest : Spek({
             it("match a sub-file") {
                 assertTrue(pattern.matches("docs/file.txt"))
             }
+            it("match a deep hierarchy") {
+                assertTrue(pattern.matches("docs/file.txt/rtfm"))
+            }
         }
 
         context("any name") {
             val pattern = Pattern("docs/*")
 
-            it("not match the folder") {
-                assertFalse(pattern.matches("docs/"))
+            it("not match a non folder") {
+                assertFalse(pattern.matches("docs"))
             }
             it("match a sub-file") {
                 assertTrue(pattern.matches("docs/file"))
             }
             it("not match a deep hierarchy") {
-                assertFalse(pattern.matches("docs/sub/file.txt"))
+                assertTrue(pattern.matches("docs/sub/file.txt"))
             }
         }
 
@@ -92,7 +95,7 @@ class PatternTest : Spek({
             it("match a sub-file") {
                 assertTrue(pattern.matches("core_ui/file.txt"))
             }
-            it("not match a deep ") {
+            it("not match a deep hierarchy") {
                 assertFalse(pattern.matches("/tmp/core_ui/file.txt"))
             }
         }
@@ -116,8 +119,8 @@ class PatternTest : Spek({
         describe("suffixed pattern") {
             val pattern = Pattern("docs/**")
 
-            it("not match the folder") {
-                assertFalse(pattern.matches("docs/"))
+            it("not match a non folder") {
+                assertFalse(pattern.matches("docs"))
             }
             it("match a sub-file") {
                 assertTrue(pattern.matches("docs/file"))

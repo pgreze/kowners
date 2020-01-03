@@ -21,11 +21,11 @@ data class CodeOwnership(
     val owners: List<String>
 )
 
-fun CharSequence.parseCodeOwners() =
-    splitToSequence("\n").parseCodeOwners()
+fun CharSequence.parseCodeOwners(): List<CodeOwnership> =
+    splitToSequence("\n").parseCodeOwners().toList()
 
-fun Sequence<CharSequence>.parseCodeOwners(): List<CodeOwnership> =
-    mapNotNull(CharSequence::parseCodeOwnersLine).toList()
+fun Sequence<CharSequence>.parseCodeOwners(): Sequence<CodeOwnership> =
+    mapNotNull(CharSequence::parseCodeOwnersLine)
 
 fun CharSequence.parseCodeOwnersLine(): CodeOwnership? {
     val line = trim { it.isWhitespace() || it.isEndOfLine() }
@@ -41,10 +41,10 @@ fun CharSequence.parseCodeOwnersLine(): CodeOwnership? {
     )
 }
 
-private fun CharSequence.tokenize(): List<String> =
-    split(" ").fold(initial = listOf(), operation = { acc, s ->
+private fun CharSequence.tokenize(delimiter: String = " "): List<String> =
+    split(delimiter).fold(initial = listOf(), operation = { acc, s ->
         if (acc.isNotEmpty() && acc.last().endsWith("\\")) {
-            acc.subList(0, acc.size - 1) + (acc.last() + " " + s)
+            acc.subList(0, acc.size - 1) + (acc.last() + delimiter + s)
         } else {
             acc + s
         }
