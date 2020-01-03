@@ -10,6 +10,8 @@ import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
 import java.io.File
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 fun main(args: Array<String>) =
     Kowners()
@@ -27,6 +29,24 @@ abstract class BaseCommand(name: String, help: String) : CliktCommand(name = nam
     val target: File by option(help = "Target directory")
         .file(exists = true)
         .default(File("."))
+
+    val gitRootPath by lazy {
+        target.findGitRootPath()
+            ?: cliError("Invalid git repository: ${target.absolutePath}")
+    }
+    val codeOwnershipFile by lazy {
+        gitRootPath.findCodeOwnerLocations().firstOrNull()
+            ?: cliError("CODEOWNERS file not found in git repo $gitRootPath")
+    }
+    val resolver by lazy { OwnersResolver(codeOwnershipFile.readLines().parseCodeOwners()) }
+
+    val relativeTarget by lazy { target.relativeTo(gitRootPath) }
+
+    val lsFiles by lazy {
+        gitRootPath.lsFiles(relativeTarget)
+            ?.takeIf { it.isNotEmpty() }
+            ?: cliError("Couldn't resolve tracked files for path $gitRootPath//$relativeTarget")
+    }
 }
 
 class Coverage : BaseCommand(
@@ -34,8 +54,28 @@ class Coverage : BaseCommand(
     help = "display the percentage of files covered by ownership rules"
 ) {
     override fun run() {
-        echo("Execute coverage for path=$target")
+        val ownerToFiles = mutableMapOf<String?, MutableSet<String>>()
+
+        lsFiles.forEach {
+            when (val owners = resolver.resolveOwnership(it)) {
+                null -> ownerToFiles.addForKey(null, it)
+                else -> owners.forEach { owner -> ownerToFiles.addForKey(owner, it) }
+            }
+        }
+
+        ownerToFiles
+            .map { (owner, files) -> owner to files.size.percentOf(lsFiles.size) }
+            .sortedByDescending { it.second }
+            .forEach { (owner, percent) ->
+                echo("${percent}% ${owner ?: "??"}")
+            }
     }
+
+    private fun MutableMap<String?, MutableSet<String>>.addForKey(key: String?, value: String) =
+        getOrPut(key, ::mutableSetOf).add(value)
+
+    private fun Int.percentOf(total: Int) =
+        (toDouble() / total * 100).roundToInt()
 }
 
 class Lint : BaseCommand(
@@ -57,17 +97,6 @@ class Query : BaseCommand(
         .flag("--absolute")
 
     override fun run() {
-        val gitRootPath = target.findGitRootPath()
-            ?: cliError("Invalid git repository: ${target.absolutePath}")
-        val codeOwnershipFile = gitRootPath.findCodeOwnerLocations().firstOrNull()
-            ?: cliError("CODEOWNERS file not found in git repo $gitRootPath")
-        val resolver = OwnersResolver(codeOwnershipFile.readLines().parseCodeOwners())
-
-        val relativeTarget = target.relativeTo(gitRootPath)
-        val lsFiles = gitRootPath.lsFiles(relativeTarget)
-            ?.takeIf { it.isNotEmpty() }
-            ?: cliError("Couldn't resolve tracked files for path $gitRootPath//$relativeTarget")
-
         lsFiles.map { it to resolver.resolveOwnership(it) }.forEach { (path, owners) ->
             if (owner.isEmpty() || owners?.any { owner.contains(it) } == true) {
                 val pathDisplay = path
