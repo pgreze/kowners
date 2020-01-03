@@ -2,7 +2,7 @@ package com.github.pgreze.kowners
 
 // Based on a JS implementation: https://github.com/codemix/gitignore-parser/blob/master/lib/index.js
 // https://github.com/JetBrains/idea-gitignore was too complex to be reused
-class Pattern(
+data class Pattern(
     @Suppress("CanBeParameter")
     val pattern: String
 ) {

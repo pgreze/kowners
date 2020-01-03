@@ -2,10 +2,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.3.50"
+    application
 }
 
 group = "com.github.pgreze"
 version = "1.0"
+
+application {
+    mainClassName = "com.github.pgreze.kowners.MainKt"
+}
 
 repositories {
     jcenter()

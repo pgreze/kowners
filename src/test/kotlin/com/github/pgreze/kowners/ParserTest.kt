@@ -8,12 +8,6 @@ import kotlin.test.assertNull
 
 class ParserTest : Spek({
 
-    describe("Empty codeowners content") {
-        it("returns empty list") {
-            assertEquals(listOf(), "".parseCodeOwners())
-        }
-    }
-
     describe("Codeowners comment") {
         it("returns null") {
             assertNull("# A comment".parseCodeOwnersLine())
@@ -29,7 +23,7 @@ class ParserTest : Spek({
     describe("Simple Codeowners line") {
         it("returns correct value for 1 owner") {
             val expected = CodeOwnership(
-                pattern = "docs/",
+                pattern = Pattern("docs/"),
                 owners = listOf("@me")
             )
             assertEquals(expected, "docs/ @me".parseCodeOwnersLine())
@@ -37,7 +31,7 @@ class ParserTest : Spek({
 
         it("returns correct value for multiple owners") {
             val expected = CodeOwnership(
-                pattern = "docs/",
+                pattern = Pattern("docs/"),
                 owners = listOf("@me", "@org/team-name")
             )
             assertEquals(expected, "docs/ @me @org/team-name".parseCodeOwnersLine())
@@ -47,7 +41,7 @@ class ParserTest : Spek({
     describe("Codeowners line with escaped space") {
         it("returns correct value") {
             val expected = CodeOwnership(
-                pattern = "docs/\\ hello",
+                pattern = Pattern("docs/\\ hello"),
                 owners = listOf("@me")
             )
             assertEquals(expected, "docs/\\ hello @me".parseCodeOwnersLine())
