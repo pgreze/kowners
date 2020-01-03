@@ -100,7 +100,7 @@ class Query : BaseCommand(
                 val pathDisplay = path
                     .takeUnless { relative }
                     ?: File(gitRootPath, path).relativeTo(target)
-                echo("$pathDisplay (${owners.ownersToString()})")
+                echo("$pathDisplay ${owners.ownersToString()}")
             }
         }
     }
@@ -110,4 +110,4 @@ private fun cliError(message: String): Nothing =
     throw CliktError(message)
 
 private fun List<String>?.ownersToString() =
-    this?.joinToString(separator = ", ") ?: "??"
+    this?.joinToString(separator = " ") ?: "??"
