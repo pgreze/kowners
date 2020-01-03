@@ -4,13 +4,26 @@ plugins {
     kotlin("jvm") version "1.3.50"
     application
     id("io.gitlab.arturbosch.detekt").version("1.3.1")
+    id("com.palantir.graal").version("0.6.0")
 }
 
 group = "com.github.pgreze"
 version = "1.0"
 
+val applicationClass = "com.github.pgreze.kowners.KownersKt"
+
+// ./gradlew run --args "..." to run locally
+// :distZip or :distTar to generate build/distributions/*.zip/tar
+// :installDist to unzip. Use: ./build/install/kowners/bin/kowners ...
 application {
-    mainClassName = "com.github.pgreze.kowners.KownersKt"
+    mainClassName = applicationClass
+}
+
+// https://github.com/palantir/gradle-graal
+// :nativeImage is building a bigger but standalone executable. Use: ./build/graal/kowners ...
+configure<com.palantir.gradle.graal.GraalExtension> {
+    mainClass(applicationClass)
+    outputName("kowners")
 }
 
 repositories {
