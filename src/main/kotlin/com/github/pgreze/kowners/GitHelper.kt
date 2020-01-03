@@ -5,22 +5,21 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 fun File.lsFiles(target: File? = null) =
-    "git ls-files ${target ?: ""}".trim()
+    listOfNotNull("git", "ls-files", target?.toString())
         .runCommand(this)
         ?.split('\n')
         ?.filter { it.isNotBlank() }
 
 // https://stackoverflow.com/a/41495542
-private fun String.runCommand(workingDir: File): String? {
+private fun List<String>.runCommand(workingDir: File, timeOutSeconds: Long = 10): String? {
     try {
-        val parts = this.split("\\s".toRegex())
-        val proc = ProcessBuilder(*parts.toTypedArray())
+        val proc = ProcessBuilder(filter { it.isNotBlank() })
             .directory(workingDir)
             .redirectOutput(ProcessBuilder.Redirect.PIPE)
             .redirectError(ProcessBuilder.Redirect.PIPE)
             .start()
 
-        proc.waitFor(5, TimeUnit.SECONDS)
+        proc.waitFor(timeOutSeconds, TimeUnit.SECONDS)
         return proc.inputStream.bufferedReader().readText()
     } catch(e: IOException) {
         e.printStackTrace()

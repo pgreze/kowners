@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.3.50"
     application
+    id("io.gitlab.arturbosch.detekt").version("1.3.1")
 }
 
 group = "com.github.pgreze"

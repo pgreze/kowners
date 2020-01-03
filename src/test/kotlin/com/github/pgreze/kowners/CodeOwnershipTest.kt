@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertNull
 
-class ParserTest : Spek({
+class CodeOwnershipTest : Spek({
 
     describe("Codeowners comment") {
         it("returns null") {
