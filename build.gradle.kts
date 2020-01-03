@@ -23,6 +23,7 @@ tasks.withType<Test> {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+    implementation("com.github.ajalt:clikt:2.3.0")
 
     testImplementation(kotlin("test"))
     val junit5 = "5.3.1"

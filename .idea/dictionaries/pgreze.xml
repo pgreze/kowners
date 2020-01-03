@@ -2,6 +2,7 @@
   <dictionary name="pgreze">
     <words>
       <w>codeowners</w>
+      <w>untracked</w>
     </words>
   </dictionary>
 </component>
