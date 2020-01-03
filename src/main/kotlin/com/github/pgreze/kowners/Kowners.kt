@@ -4,14 +4,12 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.CliktError
 import com.github.ajalt.clikt.core.NoRunCliktCommand
 import com.github.ajalt.clikt.core.subcommands
-import com.github.ajalt.clikt.parameters.options.default
-import com.github.ajalt.clikt.parameters.options.flag
-import com.github.ajalt.clikt.parameters.options.multiple
-import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.arguments.argument
+import com.github.ajalt.clikt.parameters.arguments.default
+import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.file
 import java.io.File
 import kotlin.math.roundToInt
-import kotlin.math.roundToLong
 
 fun main(args: Array<String>) =
     Kowners().main(args)
@@ -25,15 +23,16 @@ class Kowners : NoRunCliktCommand() {
 }
 
 abstract class BaseCommand(name: String, help: String) : CliktCommand(name = name, help = help) {
-    val target: File by option(help = "Target directory")
+    // Notice: ~/ notation is not possible with `gw run --args "..."` or IntelliJ runners
+    val target: File by argument(help = "Target directory (default: working directory)")
         .file(exists = true)
         .default(File("."))
 
-    val gitRootPath by lazy {
+    val gitRootPath: File by lazy {
         target.findGitRootPath()
-            ?: cliError("Invalid git repository: ${target.absolutePath}")
+            ?: cliError("Invalid git repository: $target")
     }
-    val codeOwnershipFile by lazy {
+    val codeOwnershipFile: File by lazy {
         gitRootPath.findCodeOwnerLocations().firstOrNull()
             ?: cliError("CODEOWNERS file not found in git repo $gitRootPath")
     }
