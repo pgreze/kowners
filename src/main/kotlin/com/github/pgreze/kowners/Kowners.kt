@@ -14,15 +14,14 @@ import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 fun main(args: Array<String>) =
-    Kowners()
-        .subcommands(Coverage(), Lint(), Query())
-        .main(args)
+    Kowners().main(args)
 
 // https://ajalt.github.io/clikt/
 
 class Kowners : NoRunCliktCommand() {
-    val verbose: Boolean by option("-v", "--verbose")
-        .flag("--no-verbose")
+    init {
+        subcommands(Coverage(), Lint(), Query())
+    }
 }
 
 abstract class BaseCommand(name: String, help: String) : CliktCommand(name = name, help = help) {

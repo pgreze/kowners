@@ -10,7 +10,7 @@ group = "com.github.pgreze"
 version = "1.0"
 
 application {
-    mainClassName = "com.github.pgreze.kowners.MainKt"
+    mainClassName = "com.github.pgreze.kowners.KownersKt"
 }
 
 repositories {
