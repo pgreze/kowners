@@ -4,5 +4,5 @@ class OwnersResolver(
     val ownerships: List<CodeOwnership>
 ) {
     fun resolveOwnership(path: String): List<String>? =
-        ownerships.firstOrNull { it.pattern.matches(path) }?.owners
+        ownerships.lastOrNull { it.pattern.matches(path) }?.owners
 }
