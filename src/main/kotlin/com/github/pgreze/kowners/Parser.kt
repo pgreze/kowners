@@ -5,6 +5,7 @@ val CODEOWNERS_LOCATIONS = arrayOf(
     "docs",
     ".github"
 )
+const val CODEOWNERS_FILENAME = "CODEOWNERS"
 
 data class CodeOwnership(
     /**
