@@ -26,7 +26,7 @@ abstract class BaseCommand(name: String, help: String) : CliktCommand(name = nam
     // Notice: ~/ notation is not possible with `gw run --args "..."` or IntelliJ runners
     val target: File by argument(help = "Target directory (default: working directory)")
         .file(exists = true)
-        .default(File("."))
+        .default(File(System.getProperty("user.dir")))
 
     val gitRootPath: File by lazy {
         target.findGitRootPath()
@@ -34,7 +34,7 @@ abstract class BaseCommand(name: String, help: String) : CliktCommand(name = nam
     }
     val codeOwnershipFile: File by lazy {
         gitRootPath.findCodeOwnerLocations().firstOrNull()
-            ?: cliError("CODEOWNERS file not found in git repo $gitRootPath")
+            ?: cliError("CODEOWNERS file not found in git repo ${gitRootPath.absolutePath}")
     }
     val resolver by lazy { OwnersResolver(codeOwnershipFile.readLines().parseCodeOwners()) }
 
@@ -54,10 +54,10 @@ class Coverage : BaseCommand(
     override fun run() {
         val ownerToFiles = mutableMapOf<String?, MutableSet<String>>()
 
-        lsFiles.forEach {
-            when (val owners = resolver.resolveOwnership(it)) {
-                null -> ownerToFiles.addForKey(null, it)
-                else -> owners.forEach { owner -> ownerToFiles.addForKey(owner, it) }
+        lsFiles.forEach { file ->
+            when (val owners = resolver.resolveOwnership(file)) {
+                null -> ownerToFiles.addForKey(null, file)
+                else -> owners.forEach { owner -> ownerToFiles.addForKey(owner, file) }
             }
         }
 
