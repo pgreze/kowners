@@ -22,7 +22,7 @@ fun CharSequence.parseCodeOwnersLine(): CodeOwnership? {
 
     if (line.isEmpty() || line.startsWith("#")) return null
 
-    val tokens = line.tokenize()
+    val tokens = line.tokenize().filter(String::isNotEmpty)
     require(tokens.size > 1) { "No owner in line: ${line.trim(Char::isEndOfLine)}" }
 
     return CodeOwnership(

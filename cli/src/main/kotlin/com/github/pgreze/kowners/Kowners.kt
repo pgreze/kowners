@@ -15,7 +15,6 @@ fun main(args: Array<String>) =
     Kowners().main(args)
 
 // https://ajalt.github.io/clikt/
-
 class Kowners : NoRunCliktCommand() {
     init {
         subcommands(Coverage(), Lint(), Query())
@@ -23,27 +22,32 @@ class Kowners : NoRunCliktCommand() {
 }
 
 abstract class BaseCommand(name: String, help: String) : CliktCommand(name = name, help = help) {
+    val verbose: Boolean by option("-v", "--verbose")
+        .flag(default = false)
+
     // Notice: ~/ notation is not possible with `gw run --args "..."` or IntelliJ runners
     val target: File by argument(help = "Target directory (default: working directory)")
         .file(exists = true)
         .default(File(System.getProperty("user.dir")))
 
-    val gitRootPath: File by lazy {
-        target.findGitRootPath()
-            ?: cliError("Invalid git repository: $target")
+    val gitRootPath: File? by lazy { target.findGitRootPath() }
+    private val codeOwnersFile: File by lazy {
+        (gitRootPath ?: target).findCodeOwnerLocations().firstOrNull()
+            ?: cliError("CODEOWNERS file not found in ${(gitRootPath ?: target).absolutePath}")
     }
-    val codeOwnershipFile: File by lazy {
-        gitRootPath.findCodeOwnerLocations().firstOrNull()
-            ?: cliError("CODEOWNERS file not found in git repo ${gitRootPath.absolutePath}")
-    }
-    val resolver by lazy { OwnersResolver(codeOwnershipFile.readLines().parseCodeOwners()) }
-
-    val relativeTarget by lazy { target.relativeTo(gitRootPath) }
+    val resolver by lazy { OwnersResolver(codeOwnersFile.readLines().parseCodeOwners()) }
 
     val lsFiles by lazy {
-        gitRootPath.lsFiles(relativeTarget)
-            ?.takeIf { it.isNotEmpty() }
-            ?: cliError("Couldn't resolve tracked files for path $gitRootPath//$relativeTarget")
+        gitRootPath?.let {
+            val relativeTarget = target.relativeTo(it)
+            if (verbose) echo("${it.absoluteFile} $ Git ls-files $relativeTarget", err = true)
+            it.lsFiles(relativeTarget)
+        } ?: run {
+            echo("Target is not a git tracked folder, " +
+                    "fallback to a recursive file listing", err = true)
+            target.listFilesRecursively().map { it.path }
+        }.takeIf { it.isNotEmpty() }
+            ?: cliError("Couldn't resolve tracked files for path ${target.absolutePath}")
     }
 }
 

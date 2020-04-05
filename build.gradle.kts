@@ -8,7 +8,7 @@ subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
     group = "com.github.pgreze"
-    version = "1.0"
+    version = properties.getOrDefault("VERSION", "WIP").toString()
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
@@ -27,6 +27,7 @@ subprojects {
         "implementation"(kotlin("stdlib-jdk8"))
 
         "testImplementation"(kotlin("test"))
+        "testImplementation"("com.google.truth:truth:1.0.1")
         val junit5 = "5.3.1"
         "testImplementation"("org.junit.jupiter:junit-jupiter-api:$junit5")
         "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:$junit5")
