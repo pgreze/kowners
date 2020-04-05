@@ -1,0 +1,6 @@
+*.md              charlie
+sf.md             boss
+CODEOWNERS        boss
+dir/alice/        alice
+dir/bob/          bob
+dir/*.md          maintainer
