@@ -6,7 +6,9 @@ import com.github.ajalt.clikt.core.NoRunCliktCommand
 import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.default
-import com.github.ajalt.clikt.parameters.options.*
+import com.github.ajalt.clikt.parameters.options.flag
+import com.github.ajalt.clikt.parameters.options.multiple
+import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
 import java.io.File
 import kotlin.math.roundToInt
@@ -69,7 +71,7 @@ class Coverage : BaseCommand(
             .map { (owner, files) -> owner to files.size.percentOf(lsFiles.size) }
             .sortedByDescending { it.second }
             .forEach { (owner, percent) ->
-                echo("${percent}% ${owner ?: "??"}")
+                echo("$percent% ${owner ?: "??"}")
             }
     }
 

@@ -1,10 +1,12 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.3.50" apply false
-    id("io.gitlab.arturbosch.detekt") version "1.3.1" apply false
+    id("org.jetbrains.kotlin.jvm") version "1.3.71" apply false
+    id("org.jlleitschuh.gradle.ktlint") version "9.2.1" apply false
+    id("io.gitlab.arturbosch.detekt") version "1.7.4" apply false
 }
 
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
     group = "com.github.pgreze"
@@ -12,6 +14,9 @@ subprojects {
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
+    }
+    configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+        config = files(rootDir.resolve("detekt.yml"))
     }
     tasks.withType<Test> {
         useJUnitPlatform {
