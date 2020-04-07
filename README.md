@@ -1,5 +1,7 @@
 # kowners
 
+[![Actions Status](https://github.com/pgreze/kowners/workflows/Build/badge.svg)](https://github.com/pgreze/kowners/actions)
+
 Kotlin support for [Github code owners](https://help.github.com/en/articles/about-code-owners) files.
 
 Features:
