@@ -48,7 +48,6 @@ class PatternTest : Spek({
                 assertFalse(pattern.matches("/root/hello/world"))
             }
         }
-
     }
 
     // An asterisk "*" matches anything except a slash.

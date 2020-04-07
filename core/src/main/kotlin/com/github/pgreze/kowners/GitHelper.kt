@@ -2,7 +2,6 @@ package com.github.pgreze.kowners
 
 import java.io.File
 import java.io.IOException
-import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
 fun File.lsFiles(target: File? = null): List<String> =
