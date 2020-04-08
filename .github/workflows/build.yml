@@ -1,10 +1,18 @@
+# https://help.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+# https://help.github.com/en/actions/language-and-framework-guides/publishing-java-packages-with-gradle
+
 name: Build
 
 on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # https://help.github.com/en/actions/reference/virtual-environments-for-github-hosted-runners
+    # https://help.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
@@ -23,6 +31,17 @@ jobs:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
         restore-keys: ${{ runner.os }}-gradle
-    - name: Check and Build with Gradle
+    - name: Check and Build
       run: ./gradlew check build --continue
-
+    - name: GraalVM
+      run: ./gradlew cli:nativeImage
+    - uses: actions/upload-artifact@v1
+      if: runner.os == 'Linux'
+      with:
+        name: kowners-linux.zip
+        path: cli/build/graal/kowners
+    - uses: actions/upload-artifact@v1
+      if: runner.os == 'macOS'
+      with:
+        name: kowners-macos.zip
+        path: cli/build/graal/kowners

@@ -15,6 +15,10 @@ application {
 configure<com.palantir.gradle.graal.GraalExtension> {
     mainClass(application.mainClassName)
     outputName("kowners")
+    option("--report-unsupported-elements-at-runtime")
+    option("--initialize-at-build-time")
+    option("--no-fallback")
+    option("--no-server")
 }
 
 tasks.withType<Test> {
