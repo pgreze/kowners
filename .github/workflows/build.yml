@@ -30,12 +30,12 @@ jobs:
     - name: GraalVM
       run: ./gradlew cli:nativeImage
     - uses: actions/upload-artifact@v1
-      if: runner.os == "Linux"
+      if: runner.os == 'Linux'
       with:
         name: kowners-linux
         path: cli/build/graal/kowners
     - uses: actions/upload-artifact@v1
-      if: runner.os == "macOS"
+      if: runner.os == 'macOS'
       with:
         name: kowners-macos
         path: cli/build/graal/kowners
