@@ -32,10 +32,10 @@ jobs:
     - uses: actions/upload-artifact@v1
       if: runner.os == 'Linux'
       with:
-        name: kowners-linux
+        name: kowners-linux.zip
         path: cli/build/graal/kowners
     - uses: actions/upload-artifact@v1
       if: runner.os == 'macOS'
       with:
-        name: kowners-macos
+        name: kowners-macos.zip
         path: cli/build/graal/kowners
