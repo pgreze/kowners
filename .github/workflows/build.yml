@@ -31,5 +31,5 @@ jobs:
       run: ./gradlew cli:nativeImage
     - uses: actions/upload-artifact@v1
       with:
-        name: kowners-${{ runner.os }}
+        name: kowners-${{ runner.os.toLowerCase() }}
         path: cli/build/graal/kowners
