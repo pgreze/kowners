@@ -22,7 +22,7 @@ fun main(args: Array<String>) =
 // https://ajalt.github.io/clikt/
 class Kowners : NoRunCliktCommand() {
     init {
-        subcommands(Blame(), Coverage(), Lint(), Query())
+        subcommands(Blame(), Coverage(), Query())
     }
 }
 
@@ -142,15 +142,6 @@ class Coverage : BaseCommand(
 
 private fun Int.percentOf(total: Int) =
     (toDouble() / total * 100).roundToInt()
-
-class Lint : BaseCommand(
-    name = "lint",
-    help = "warns when new untracked files are added during commit"
-) {
-    override fun run() {
-        echo("Execute lint for path=$target")
-    }
-}
 
 class Query : BaseCommand(
     name = "query",
