@@ -3,11 +3,19 @@
 
 name: Build
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # https://help.github.com/en/actions/reference/virtual-environments-for-github-hosted-runners
+    # https://help.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
     steps:
       # setup
       - uses: actions/checkout@v2
@@ -31,3 +39,16 @@ jobs:
       # Build
       - name: Build
         run: ./gradlew build --continue
+      # GraalVM
+      - name: GraalVM
+        run: ./gradlew cli:nativeImage
+      - uses: actions/upload-artifact@v1
+        if: runner.os == 'Linux'
+        with:
+          name: kowners-linux.zip
+          path: cli/build/graal/kowners
+      - uses: actions/upload-artifact@v1
+        if: runner.os == 'macOS'
+        with:
+          name: kowners-macos.zip
+          path: cli/build/graal/kowners
