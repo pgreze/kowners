@@ -6,11 +6,14 @@ import com.github.ajalt.clikt.core.NoRunCliktCommand
 import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.default
+import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.file
 import java.io.File
+import java.util.Locale
 import kotlin.math.roundToInt
 
 fun main(args: Array<String>) =
@@ -19,7 +22,7 @@ fun main(args: Array<String>) =
 // https://ajalt.github.io/clikt/
 class Kowners : NoRunCliktCommand() {
     init {
-        subcommands(Coverage(), Lint(), Query())
+        subcommands(Blame(), Coverage(), Lint(), Query())
     }
 }
 
@@ -39,7 +42,7 @@ abstract class BaseCommand(name: String, help: String) : CliktCommand(name = nam
     }
     val resolver by lazy { OwnersResolver(codeOwnersFile.readLines().parseCodeOwners()) }
 
-    val lsFiles by lazy {
+    val lsFiles: List<String> by lazy {
         gitRootPath?.let {
             val relativeTarget = target.relativeTo(it)
             if (verbose) echo("${it.absoluteFile} $ Git ls-files $relativeTarget", err = true)
@@ -51,6 +54,52 @@ abstract class BaseCommand(name: String, help: String) : CliktCommand(name = nam
         }.takeIf { it.isNotEmpty() }
             ?: cliError("Couldn't resolve tracked files for path ${target.absolutePath}")
     }
+}
+
+class Blame : BaseCommand(
+    name = "blame",
+    help = "display how many files are covered for each line"
+) {
+    enum class Display { LIST, COUNT, PERCENT }
+
+    val displayMode: Display by option("-d", "--display", help = "Choose how to display result")
+        .choice(Display.values().map { it.name.toLowerCase(Locale.US) to it }.toMap())
+        .default(Display.LIST)
+
+    override fun run() {
+        val foundFiles = mutableSetOf<String>()
+        val lineToFiles = mutableMapOf<Int, MutableSet<String>>()
+        resolver.ownerships.withIndex().reversed().forEach { (index, line) ->
+            lsFiles.forEach { file ->
+                if (file !in foundFiles && line.pattern.matches(file)) {
+                    lineToFiles.getOrPut(index, ::mutableSetOf).add(file)
+                    foundFiles.add(file)
+                }
+            }
+        }
+
+        val countMaxLength by lazy {
+            (lineToFiles.map { it.value.size }.max() ?: 0).toString().length
+        }
+        resolver.ownerships.withIndex().forEach { (index, line) ->
+            echo(when (displayMode) {
+                Display.LIST ->
+                    line.origin + lineToFiles[index]
+                        ?.let { "\n    " + it.joinToString("\n    ") }
+                Display.COUNT ->
+                    (lineToFiles[index]?.size?.toString()?.padEnd(countMaxLength, ' ')
+                        ?: "0${" ".repeat(countMaxLength - 1)}")
+                        .let { "$it ${line.origin}" }
+                Display.PERCENT ->
+                    (lineToFiles[index]?.size?.percentOf(lsFiles.size)?.toString()
+                        ?: "0")
+                        .let { "$it%".padEnd(4, ' ') + line.origin }
+            })
+        }
+    }
+
+    private val CodeOwnership.origin: String
+        get() = "${pattern.pattern} ${owners.joinToString(" ")}"
 }
 
 class Coverage : BaseCommand(
@@ -77,10 +126,10 @@ class Coverage : BaseCommand(
 
     private fun MutableMap<String?, MutableSet<String>>.addForKey(key: String?, value: String) =
         getOrPut(key, ::mutableSetOf).add(value)
-
-    private fun Int.percentOf(total: Int) =
-        (toDouble() / total * 100).roundToInt()
 }
+
+private fun Int.percentOf(total: Int) =
+    (toDouble() / total * 100).roundToInt()
 
 class Lint : BaseCommand(
     name = "lint",
