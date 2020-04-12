@@ -1,6 +1,7 @@
 plugins {
     application
-    id("com.palantir.graal").version("0.6.0")
+    id("com.github.johnrengelman.shadow") version "5.2.0"
+    id("com.palantir.graal") version "0.6.0"
 }
 
 // ./gradlew run --args "..." to run locally
@@ -8,6 +9,10 @@ plugins {
 // :installDist to unzip. Use: build/install/kowners/bin/kowners ...
 application {
     mainClassName = "com.github.pgreze.kowners.KownersKt"
+}
+
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    archiveBaseName.set("kowners")
 }
 
 // https://github.com/palantir/gradle-graal
