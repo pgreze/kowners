@@ -67,6 +67,11 @@ class Blame : BaseCommand(
         .default(Display.LIST)
 
     override fun run() {
+        val lineToFiles = resolveLineToFiles()
+        display(lineToFiles)
+    }
+
+    private fun resolveLineToFiles(): MutableMap<Int, MutableSet<String>> {
         val foundFiles = mutableSetOf<String>()
         val lineToFiles = mutableMapOf<Int, MutableSet<String>>()
         resolver.ownerships.withIndex().reversed().forEach { (index, line) ->
@@ -77,7 +82,10 @@ class Blame : BaseCommand(
                 }
             }
         }
+        return lineToFiles
+    }
 
+    private fun display(lineToFiles: MutableMap<Int, MutableSet<String>>) {
         val countMaxLength by lazy {
             (lineToFiles.map { it.value.size }.max() ?: 0).toString().length
         }
@@ -93,13 +101,17 @@ class Blame : BaseCommand(
                 Display.PERCENT ->
                     (lineToFiles[index]?.size?.percentOf(lsFiles.size)?.toString()
                         ?: "0")
-                        .let { "$it%".padEnd(4, ' ') + line.origin }
+                        .let { "$it%".padEnd(PERCENT_SIZE, ' ') + line.origin }
             })
         }
     }
 
     private val CodeOwnership.origin: String
         get() = "${pattern.pattern} ${owners.joinToString(" ")}"
+
+    companion object {
+        const val PERCENT_SIZE = 4 // Size of 'XX% ' pattern.
+    }
 }
 
 class Coverage : BaseCommand(
