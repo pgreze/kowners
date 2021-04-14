@@ -85,7 +85,7 @@ class Blame : BaseCommand(
 
     private fun display(lineToFiles: MutableMap<Int, MutableSet<String>>) {
         val countMaxLength by lazy {
-            (lineToFiles.map { it.value.size }.max() ?: 0).toString().length
+            (lineToFiles.map { it.value.size }.maxOrNull() ?: 0).toString().length
         }
         resolver.ownerships.withIndex().forEach { (index, line) ->
             when (displayMode) {
