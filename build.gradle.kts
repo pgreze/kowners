@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.npm.includedRange
+
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.4.32" apply false
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0" apply false
@@ -26,6 +28,9 @@ subprojects {
 
     repositories {
         mavenCentral()
+        jcenter() {
+            content { includeModule("org.jetbrains.kotlinx", "kotlinx-html-jvm") }
+        }
     }
 
     dependencies {
