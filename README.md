@@ -10,6 +10,36 @@ Features:
 - lint: warns when new untracked files are added during commit,
 - query: display the potential owner and sub-hierarchy owners.
 
+# Use from command line
+
+## Official releases
+
+See artifacts from https://github.com/pgreze/kowners/releases
+
+Example for Linux:
+```
+unzip kowners-linux.zip
+./kowners
+```
+
+## From latest master commits
+
+See artifacts from https://github.com/pgreze/kowners/actions/workflows/master.yml
+
+For the jar distribution:
+```
+unzip kowners-jar.zip
+java -jar kowners.jar
+```
+
+For the graalvm distribution:
+```
+unzip kowners-macos.zip
+chmod +x kowners
+[ "$(uname)" = "Darwin" ] && sudo xattr -r -d com.apple.quarantine kowners
+./kowners
+```
+
 ## TODO
 
 - Support directory/file distinction
