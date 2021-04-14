@@ -42,7 +42,7 @@ jobs:
       - uses: actions/upload-artifact@v1
         with:
           name: kowners.jar
-          path: cli/build/install/kowners-*.jar
+          path: cli/build/install/kowners.jar
       # Publish GraalVM
       - uses: actions/upload-artifact@v1
         if: runner.os == 'Linux'

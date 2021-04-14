@@ -39,7 +39,7 @@ val dropAllSuffix = tasks.register("dropAllSuffix", Copy::class.java) {
     from(libFolder)
     include(artifactName)
     destinationDir = file(libFolder.parentFile.parentFile)
-    rename("-all".toPattern(), "")
+    rename("-$version-all".toPattern(), "")
 }
 installShadowDist.configure { finalizedBy(dropAllSuffix) }
 
