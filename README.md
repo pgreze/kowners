@@ -1,6 +1,6 @@
 # kowners
 
-![Build](https://github.com/pgreze/kowners/workflows/Build/badge.svg?branch=master)
+![Build](https://github.com/pgreze/kowners/workflows/Build/badge.svg?branch=main)
 
 Kotlin support for [Github code owners](https://help.github.com/en/articles/about-code-owners) files.
 
@@ -22,9 +22,9 @@ unzip kowners-linux.zip
 ./kowners
 ```
 
-## From latest master commits
+## From latest commits
 
-See artifacts from https://github.com/pgreze/kowners/actions/workflows/master.yml
+See artifacts from https://github.com/pgreze/kowners/actions/workflows/main.yml
 
 For the jar distribution:
 ```
