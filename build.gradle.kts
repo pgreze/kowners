@@ -10,7 +10,7 @@ subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
     group = "com.github.pgreze"
-    version = properties.getOrDefault("VERSION", "WIP").toString()
+    version = properties.getOrDefault("kowners.version", "WIP").toString()
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
