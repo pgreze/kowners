@@ -1,7 +1,7 @@
 # https://help.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 # https://help.github.com/en/actions/language-and-framework-guides/publishing-java-packages-with-gradle
 
-name: Build
+name: Publish
 
 on:
   push:
@@ -40,17 +40,18 @@ jobs:
       - name: Build
         run: ./gradlew build cli:installShadowDist cli:nativeImage --continue
       - uses: actions/upload-artifact@v1
+        if: runner.os == 'Linux'
         with:
-          name: kowners.jar
+          name: kowners-jar
           path: cli/build/install/kowners.jar
       # Publish GraalVM
       - uses: actions/upload-artifact@v1
         if: runner.os == 'Linux'
         with:
-          name: kowners-linux.zip
+          name: kowners-linux
           path: cli/build/graal/kowners
       - uses: actions/upload-artifact@v1
         if: runner.os == 'macOS'
         with:
-          name: kowners-macos.zip
+          name: kowners-macos
           path: cli/build/graal/kowners
