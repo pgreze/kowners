@@ -1,7 +1,7 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.3.71" apply false
-    id("org.jlleitschuh.gradle.ktlint") version "9.2.1" apply false
-    id("io.gitlab.arturbosch.detekt") version "1.7.4" apply false
+    id("org.jetbrains.kotlin.jvm") version "1.4.32" apply false
+    id("org.jlleitschuh.gradle.ktlint") version "10.0.0" apply false
+    id("io.gitlab.arturbosch.detekt") version "1.16.0" apply false
 }
 
 subprojects {
@@ -25,7 +25,7 @@ subprojects {
     }
 
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {

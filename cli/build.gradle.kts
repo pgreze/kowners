@@ -1,7 +1,7 @@
 plugins {
     application
-    id("com.github.johnrengelman.shadow") version "5.2.0"
-    id("com.palantir.graal") version "0.6.0"
+    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("com.palantir.graal") version "0.7.2"
 }
 
 // ./gradlew run --args "..." to run locally
@@ -35,5 +35,5 @@ tasks.withType<Test> {
 dependencies {
     implementation(project(":core"))
 
-    implementation("com.github.ajalt:clikt:2.3.0")
+    implementation("com.github.ajalt.clikt:clikt:3.1.0")
 }

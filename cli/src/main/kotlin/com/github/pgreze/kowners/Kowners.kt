@@ -2,7 +2,7 @@ package com.github.pgreze.kowners
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.CliktError
-import com.github.ajalt.clikt.core.NoRunCliktCommand
+import com.github.ajalt.clikt.core.NoOpCliktCommand
 import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.default
@@ -20,7 +20,7 @@ fun main(args: Array<String>) =
     Kowners().main(args)
 
 // https://ajalt.github.io/clikt/
-class Kowners : NoRunCliktCommand() {
+class Kowners : NoOpCliktCommand() {
     init {
         subcommands(Blame(), Coverage(), Query())
     }
@@ -32,7 +32,7 @@ abstract class BaseCommand(name: String, help: String) : CliktCommand(name = nam
 
     // Notice: ~/ notation is not possible with `gw run --args "..."` or IntelliJ runners
     val target: File by argument(help = "Target directory (default: working directory)")
-        .file(exists = true)
+        .file(mustExist = true)
         .default(File(System.getProperty("user.dir")))
 
     val gitRootPath: File? by lazy { target.findGitRootPath() }
@@ -63,7 +63,7 @@ class Blame : BaseCommand(
     enum class Display { LIST, COUNT, PERCENT }
 
     val displayMode: Display by option("-d", "--display", help = "Choose how to display result")
-        .choice(Display.values().map { it.name.toLowerCase(Locale.US) to it }.toMap())
+        .choice(Display.values().map { it.name.toLowerCase(Locale.ROOT) to it }.toMap())
         .default(Display.LIST)
 
     override fun run() {
