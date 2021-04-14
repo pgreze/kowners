@@ -58,7 +58,7 @@ abstract class BaseCommand(name: String, help: String) : CliktCommand(name = nam
 
 class Blame : BaseCommand(
     name = "blame",
-    help = "display how many files are covered for each line"
+    help = "display how many files are covered for each configuration line"
 ) {
     enum class Display { LIST, COUNT, PERCENT }
 
