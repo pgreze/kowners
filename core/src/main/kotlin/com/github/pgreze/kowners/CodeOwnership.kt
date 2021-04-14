@@ -32,13 +32,13 @@ fun CharSequence.parseCodeOwnersLine(): CodeOwnership? {
 }
 
 private fun CharSequence.tokenize(delimiter: String = " "): List<String> =
-    split(delimiter).fold(initial = listOf(), operation = { acc, s ->
+    split(delimiter).fold(listOf()) { acc, s ->
         if (acc.isNotEmpty() && acc.last().endsWith("\\")) {
             acc.subList(0, acc.size - 1) + (acc.last() + delimiter + s)
         } else {
             acc + s
         }
-    })
+    }
 
 private fun Char.isEndOfLine(): Boolean =
     this == '\r' || this == '\n'

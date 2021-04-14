@@ -48,11 +48,9 @@ abstract class BaseCommand(name: String, help: String) : CliktCommand(name = nam
             if (verbose) echo("${it.absoluteFile} $ Git ls-files $relativeTarget", err = true)
             it.lsFiles(relativeTarget)
         } ?: run {
-            echo("Target is not a git tracked folder, " +
-                    "fallback to a recursive file listing", err = true)
+            echo("Target is not a git tracked folder, fallback to a recursive file listing", err = true)
             target.listFilesRecursively().map { it.path }
-        }.takeIf { it.isNotEmpty() }
-            ?: cliError("Couldn't resolve tracked files for path ${target.absolutePath}")
+        }.takeIf { it.isNotEmpty() } ?: cliError("Couldn't resolve tracked files for path ${target.absolutePath}")
     }
 }
 
@@ -90,19 +88,18 @@ class Blame : BaseCommand(
             (lineToFiles.map { it.value.size }.max() ?: 0).toString().length
         }
         resolver.ownerships.withIndex().forEach { (index, line) ->
-            echo(when (displayMode) {
+            when (displayMode) {
                 Display.LIST ->
                     line.origin + lineToFiles[index]
                         ?.let { "\n    " + it.joinToString("\n    ") }
-                Display.COUNT ->
-                    (lineToFiles[index]?.size?.toString()?.padEnd(countMaxLength, ' ')
-                        ?: "0${" ".repeat(countMaxLength - 1)}")
-                        .let { "$it ${line.origin}" }
-                Display.PERCENT ->
-                    (lineToFiles[index]?.size?.percentOf(lsFiles.size)?.toString()
-                        ?: "0")
-                        .let { "$it%".padEnd(PERCENT_SIZE, ' ') + line.origin }
-            })
+                Display.COUNT -> (
+                    lineToFiles[index]?.size?.toString()?.padEnd(countMaxLength, ' ')
+                        ?: "0${" ".repeat(countMaxLength - 1)}"
+                    ).let { "$it ${line.origin}" }
+                Display.PERCENT -> (
+                    lineToFiles[index]?.size?.percentOf(lsFiles.size)?.toString() ?: "0"
+                    ).let { "$it%".padEnd(PERCENT_SIZE, ' ') + line.origin }
+            }.let(::echo)
         }
     }
 
