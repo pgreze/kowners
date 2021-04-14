@@ -90,15 +90,14 @@ class Blame : BaseCommand(
         resolver.ownerships.withIndex().forEach { (index, line) ->
             when (displayMode) {
                 Display.LIST ->
-                    line.origin + lineToFiles[index]
-                        ?.let { "\n    " + it.joinToString("\n    ") }
+                    line.origin + lineToFiles[index]?.let { "\n    " + it.joinToString("\n    ") }
                 Display.COUNT -> (
                     lineToFiles[index]?.size?.toString()?.padEnd(countMaxLength, ' ')
                         ?: "0${" ".repeat(countMaxLength - 1)}"
                     ).let { "$it ${line.origin}" }
-                Display.PERCENT -> (
-                    lineToFiles[index]?.size?.percentOf(lsFiles.size)?.toString() ?: "0"
-                    ).let { "$it%".padEnd(PERCENT_SIZE, ' ') + line.origin }
+                Display.PERCENT ->
+                    (lineToFiles[index]?.size?.percentOf(lsFiles.size)?.toString() ?: "0")
+                        .let { "$it%".padEnd(PERCENT_SIZE, ' ') + line.origin }
             }.let(::echo)
         }
     }
