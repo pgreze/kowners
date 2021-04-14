@@ -32,6 +32,17 @@ tasks.withType<Test> {
     }
 }
 
+val installShadowDist = tasks.named("installShadowDist", Sync::class.java)
+val dropAllSuffix = tasks.register("dropAllSuffix", Copy::class.java) {
+    val libFolder = installShadowDist.get().destinationDir.resolve("lib")
+    val artifactName = "kowners-$version-all.jar"
+    from(libFolder)
+    include(artifactName)
+    destinationDir = file(libFolder.parentFile.parentFile)
+    rename("-all".toPattern(), "")
+}
+installShadowDist.configure { finalizedBy(dropAllSuffix) }
+
 dependencies {
     implementation(project(":core"))
 

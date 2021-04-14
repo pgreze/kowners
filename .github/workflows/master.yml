@@ -38,10 +38,12 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       # Build
       - name: Build
-        run: ./gradlew build --continue
-      # GraalVM
-      - name: GraalVM
-        run: ./gradlew cli:nativeImage
+        run: ./gradlew build cli:installShadowDist cli:nativeImage --continue
+      - uses: actions/upload-artifact@v1
+        with:
+          name: kowners-*.jar
+          path: cli/build/install
+      # Publish GraalVM
       - uses: actions/upload-artifact@v1
         if: runner.os == 'Linux'
         with:
