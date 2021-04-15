@@ -56,7 +56,7 @@ abstract class BaseCommand(name: String, help: String) : CliktCommand(name = nam
 
 class Blame : BaseCommand(
     name = "blame",
-    help = "display how many files are covered for each configuration line"
+    help = "display how many files are covered by each ownership rules"
 ) {
     enum class Display { LIST, COUNT, PERCENT }
 
@@ -112,7 +112,7 @@ class Blame : BaseCommand(
 
 class Coverage : BaseCommand(
     name = "coverage",
-    help = "display the percentage of files covered by ownership rules"
+    help = "display the percentage of files covered by each ownership rules"
 ) {
     override fun run() {
         val ownerToFiles = mutableMapOf<String?, MutableSet<String>>()
@@ -141,7 +141,7 @@ private fun Int.percentOf(total: Int) =
 
 class Query : BaseCommand(
     name = "query",
-    help = "display the potential owner and sub-hierarchy owners"
+    help = "display the potential owner and sub-hierarchy owners for each versioned file"
 ) {
     val owner: List<String> by option(help = "Filter by owner(s)")
         .multiple()
