@@ -6,9 +6,9 @@ Kotlin support for [Github code owners](https://help.github.com/en/articles/abou
 
 Features:
 
-- coverage: display the percentage of files covered by ownership rules,
-- lint: warns when new untracked files are added during commit,
-- query: display the potential owner and sub-hierarchy owners.
+- **blame**: display how many files are covered by each ownership rules.
+- **coverage**: display the percentage of files covered by each ownership rules.
+- **query**: display the potential owner and sub-hierarchy owners for each versioned file.
 
 # Use from command line
 
